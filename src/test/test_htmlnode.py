@@ -1,5 +1,5 @@
 import unittest
-from src.htmlnode import HTMLNode, LeafNode
+from src.htmlnode import HTMLNode, ParentNode,LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -60,6 +60,32 @@ class TestHTMLNode(unittest.TestCase):
         node = LeafNode("a", "Come here to learn and stop being a soydev!",{"href":"https://boot.dev"})
         self.assertEqual(node.to_html(), '<a href="https://boot.dev">Come here to learn and stop being a soydev!</a>')
 
+    def test_leaf_to_html_i(self):
+        node = LeafNode("i", "This is very pretentious text")
+        self.assertEqual(node.to_html(), "<i>This is very pretentious text</i>")
+
+
+    def test_to_html_with_multiple_children(self):
+        child_node = LeafNode("span", "child")
+        child_node2 = LeafNode("i", "pretentious child")
+        child_node3 = LeafNode("b", "bold child")
+        
+        parent_node = ParentNode("div", [child_node, child_node2, child_node3])
+        
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span><i>pretentious child</i><b>bold child</b></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        
+        self.assertEqual(
+                parent_node.to_html(),
+                "<div><span><b>grandchild</b></span></div>",
+                )
+
+    def test_to_html_with_children(self):
+        pass
 
 
 if __name__ == "__main__":
