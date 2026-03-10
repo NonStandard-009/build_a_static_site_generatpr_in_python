@@ -1,5 +1,5 @@
 from enum import Enum
-from src.htmlnode import LeafNode
+from htmlnode import LeafNode
 
 
 class TextType(Enum):
@@ -24,7 +24,9 @@ class TextNode:
         return eq_text and eq_text_type and eq_url
 
     def __repr__(self) -> str:
-        return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
+        if self.url == None:
+            return f"TextNode({self.text}, {self.text_type})"
+        return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
 
 def text_node_to_html_node(text_node):
