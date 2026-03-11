@@ -1,6 +1,6 @@
 import unittest
 from textnode import TextNode, TextType
-from split_node import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+from split_node import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes, text_node_to_html_node
 
 
 class TestSplitNodes(unittest.TestCase):
@@ -101,6 +101,26 @@ class TestSplitNodes(unittest.TestCase):
                     ],
                 new_nodes
                 )
+    def test_plain_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+                
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+        
+    def test_italic_text(self):
+        node2 = TextNode("This is pretentious text", TextType.ITALIC)
+        html_node2 = text_node_to_html_node(node2)
+
+        self.assertEqual(html_node2.tag, 'i')
+        self.assertEqual(html_node2.value, "This is pretentious text")
+
+    def test_link_text(self):
+        node3 = TextNode("Come out and learn", TextType.LINK, "https://boot.dev")
+        html_node3 = text_node_to_html_node(node3)
+        
+        self.assertEqual(html_node3.tag, 'a')
+        self.assertNotEqual(html_node3.props, None)
 
 
 if __name__ == "__main__":

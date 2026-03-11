@@ -1,4 +1,5 @@
 from textnode import TextType, TextNode
+from htmlnode import LeafNode
 from extract_from_markdown import extract_markdown_images, extract_markdown_links
 
 
@@ -89,4 +90,28 @@ def text_to_textnodes(text) -> list:
     old_nodes = split_nodes_link(old_nodes)
 
     return old_nodes
+
+
+def text_node_to_html_node(text_node):
+    match text_node.text_type:
+        case TextType.TEXT:
+            return LeafNode(None, text_node.text)
+
+        case TextType.BOLD:
+            return LeafNode('b', text_node.text)
+
+        case TextType.ITALIC:
+            return LeafNode('i', text_node.text)
+
+        case TextType.CODE:
+            return LeafNode('code', text_node.text)
+
+        case TextType.LINK:
+            return LeafNode('a', text_node.text, {"href": text_node.url})
+
+        case TextType.IMAGE:
+            return LeafNode('a', text_node.text, {"href": text_node.url})
+
+        case _:
+            raise Exception("Incorrect TextType")
 
