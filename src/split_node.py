@@ -24,7 +24,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type) -> list:
     return new_nodes 
 
 
-def split_nodes_image(old_nodes):
+def split_nodes_image(old_nodes) -> list:
     new_nodes = []
 
     for node in old_nodes:
@@ -51,7 +51,7 @@ def split_nodes_image(old_nodes):
     return new_nodes 
 
 
-def split_nodes_link(old_nodes):
+def split_nodes_link(old_nodes) -> list:
     new_nodes = []
 
     for node in old_nodes:
@@ -78,17 +78,15 @@ def split_nodes_link(old_nodes):
     return new_nodes
 
 
-def main():
-    node = TextNode(
-        "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
-        TextType.TEXT,
-    )
-    new_nodes = split_nodes_link([node])
-    
-    for node in new_nodes:
-        print(node)
+def text_to_textnodes(text) -> list:
+    node = TextNode(text, TextType.TEXT)
+    old_nodes = [node]
 
+    old_nodes = split_nodes_delimiter(old_nodes, "**", TextType.BOLD)
+    old_nodes = split_nodes_delimiter(old_nodes, "_", TextType.ITALIC)
+    old_nodes = split_nodes_delimiter(old_nodes, "`", TextType.CODE)
+    old_nodes = split_nodes_image(old_nodes)
+    old_nodes = split_nodes_link(old_nodes)
 
-if __name__ == "__main__":
-    main()
+    return old_nodes
 
