@@ -1,7 +1,7 @@
 from enum import Enum
-from htmlnode import ParentNode
-from split_node import text_node_to_html_node, text_to_children
-from textnode import TextNode, TextType
+from src.htmlnode import ParentNode
+from src.split_node import text_node_to_html_node, text_to_children
+from src.textnode import TextNode, TextType
 
 
 class BlockType(Enum):
