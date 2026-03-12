@@ -1,7 +1,7 @@
 from enum import Enum
-from src.htmlnode import ParentNode
-from src.split_node import text_node_to_html_node, text_to_children
-from src.textnode import TextNode, TextType
+from htmlnode import ParentNode
+from split_node import text_node_to_html_node, text_to_children
+from textnode import TextNode, TextType
 
 
 class BlockType(Enum):
@@ -102,4 +102,35 @@ def markdown_to_html_node(markdown_file):
                 inner_parents.append(parent_code)
 
     return ParentNode("div", inner_parents)
+
+def extract_title(markdown):
+    md_blocks = markdown_to_blocks(markdown)
+    
+    for block in md_blocks:
+        if block.startswith('# '):
+            return block
+    raise Exception("Error: No title found")
+
+
+def main():
+    md = """
+# This has a title
+And then some text
+"""
+    
+    md2 = """
+## This has this heading 
+### and this other heading 
+but not title whatsoever
+"""
+    
+    try:
+        print(extract_title(md))
+        print(extract_title(md2))
+   
+    except Exception as e:
+        print(e) 
+
+if __name__ == "__main__":
+    main()
 
