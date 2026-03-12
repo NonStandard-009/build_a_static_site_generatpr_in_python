@@ -115,3 +115,13 @@ def text_node_to_html_node(text_node):
         case _:
             raise Exception("Incorrect TextType")
 
+def text_to_children(text):
+    children = []
+
+    text_nodes = text_to_textnodes(text)
+
+    for node in text_nodes:
+        children.append(text_node_to_html_node(node))
+    
+    return children
+

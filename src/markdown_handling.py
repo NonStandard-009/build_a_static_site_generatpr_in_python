@@ -1,4 +1,7 @@
 from enum import Enum
+from htmlnode import ParentNode
+from split_node import text_node_to_html_node, text_to_children
+from textnode import TextNode, TextType
 
 
 class BlockType(Enum):
@@ -34,45 +37,69 @@ def block_to_block_type(block) -> BlockType:
     
     return BlockType.PARAGRAPH
 
-def markdown_to_blocks(markdown):
+def markdown_to_blocks(markdown) -> list:
     md_blocks = []
 
     for block in markdown.split("\n\n"):
-         md_blocks.append(block.strip('\n '))
+        if block != '': 
+            md_blocks.append(block.strip('\n '))
     
     return md_blocks
 
-def main():
-    md = """
-This is **bolded** paragraph
-
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-
-- This is a list
-- with items
-"""
+def markdown_to_html_node(markdown_file):
+    inner_parents = []
+    md_blocks = markdown_to_blocks(markdown_file)
     
-    md_blocks = markdown_to_blocks(md)
-
-    print(md_blocks)
-
     for block in md_blocks:
-        print(block)
+        block_type = block_to_block_type(block)
+        
+        match block_type:
+            case BlockType.HEADING:
+                counter = 0
+                for chr in block[:6]:
+                    if chr != '#':
+                        break
+                    counter += 1
+                children = text_to_children(block[counter:])
+                parent_heading = ParentNode(f"h{counter}", children)
+                inner_parents.append(parent_heading)
+            
+            case BlockType.PARAGRAPH:
+                block_lines = block.split("\n")
+                text = " ".join(block_lines)
+                children = text_to_children(text)
+                parent_paragraph = ParentNode("p", children)
+                inner_parents.append(parent_paragraph)
 
-    testing_blocks = [
-            "# This # is a heading",
-            "```\n if {This test block is code}:\n\tThe output should be = BlockType.CODE```",
-            "> This is quoting Boots, a quote...",
-            "- This is an item on a list\n- This is another item",
-            "1. This is number one\n2. This is number two",
-            "This is just lazy"
-            ]
-    
-    for block in testing_blocks:
-        print(block_to_block_type(block))
+            case BlockType.QUOTE:
+                children = text_to_children(block)
+                parent_quote = ParentNode("blockquote", children)
+                inner_parents.append(parent_quote)
+                
+            case BlockType.UNORDERED_LIST:
+                children = []
+                list_items = block.split("\n")
+                
+                for item in list_items:
+                    children.append(ParentNode("li", text_to_children(item[2:])))
+                
+                parent_unordered_list = ParentNode("ul", children)
+                inner_parents.append(parent_unordered_list)
+                
+            case BlockType.ORDERED_LIST:
+                children = []
+                list_items = block.split("\n")
+                
+                for item in list_items:
+                    children.append(ParentNode("li", text_to_children(item[2:])))
+                
+                parent_ordered_list = ParentNode("ol", children)
+                inner_parents.append(parent_ordered_list)
+                
+            case BlockType.CODE:
+                code_block = TextNode(block[4:-3], TextType.CODE)
+                parent_code = ParentNode("pre", [text_node_to_html_node(code_block)])
+                inner_parents.append(parent_code)
 
-
-if __name__ == "__main__":
-    main()
+    return ParentNode("div", inner_parents)
 
