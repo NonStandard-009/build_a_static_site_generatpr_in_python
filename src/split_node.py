@@ -118,7 +118,7 @@ def text_node_to_html_node(text_node):
 def text_to_children(text):
     children = []
 
-    text_nodes = text_to_textnodes(text)
+    text_nodes = text_to_textnodes(text.strip(" "))
 
     for node in text_nodes:
         children.append(text_node_to_html_node(node))

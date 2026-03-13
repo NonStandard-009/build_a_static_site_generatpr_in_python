@@ -72,7 +72,16 @@ def markdown_to_html_node(markdown_file):
                 inner_parents.append(parent_paragraph)
 
             case BlockType.QUOTE:
-                children = text_to_children(block)
+                lines = block.split("\n")
+                new_lines = []
+                for line in lines:
+                    if not line.startswith(">"):
+                        raise ValueError("invalid quote block")
+                    stripped = line.lstrip(">").strip()
+                    if stripped:  # skip empty lines
+                        new_lines.append(stripped)
+                content = " ".join(new_lines)
+                children = text_to_children(content)
                 parent_quote = ParentNode("blockquote", children)
                 inner_parents.append(parent_quote)
                 
@@ -108,29 +117,7 @@ def extract_title(markdown):
     
     for block in md_blocks:
         if block.startswith('# '):
-            return block
+            return block[2:].strip(" ")
+    
     raise Exception("Error: No title found")
-
-
-def main():
-    md = """
-# This has a title
-And then some text
-"""
-    
-    md2 = """
-## This has this heading 
-### and this other heading 
-but not title whatsoever
-"""
-    
-    try:
-        print(extract_title(md))
-        print(extract_title(md2))
-   
-    except Exception as e:
-        print(e) 
-
-if __name__ == "__main__":
-    main()
 
