@@ -43,7 +43,7 @@ class LeafNode(HTMLNode):
         super().__init__(tag, value, None, props)
     
     def to_html(self):
-        void_elements = ['a', 'img']
+        void_elements = ['img']
         if self.value == None:
             raise ValueError
         
