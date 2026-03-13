@@ -1,3 +1,4 @@
+from os.path import isfile
 import os, shutil
 from markdown_handling import extract_title, markdown_to_html_node
 
@@ -25,7 +26,7 @@ def copy_files_recursive(src_path, dst_path):
             new_dst_path = os.path.join(dst_path, item)
             copy_files_recursive(new_src_path, new_dst_path)
 
-def generate_page(from_path, template_path="LMAO", dst_path="LMAO"):
+def generate_page(from_path, template_path, dst_path):
     print(f"Generating page from {from_path} to {dst_path} using {template_path}")
     
     with open(from_path, 'r') as src_file:
@@ -43,4 +44,22 @@ def generate_page(from_path, template_path="LMAO", dst_path="LMAO"):
     final_dst = os.path.join(dst_path, "index.html")
     with open(final_dst, 'w') as html_file:
         html_file.write(new_template)
+
+def generate_pages_recursive(dir_path_content, template_path, dst_dir_path):
+    contents = os.listdir(dir_path_content)
+
+    for content in contents:
+        full_item_path = os.path.join(dir_path_content, content)
+
+        if os.path.isfile(full_item_path):
+            
+            path_to_file = os.path.join(dir_path_content, content)
+            generate_page(path_to_file, template_path, dst_dir_path)
+        
+        else:
+            
+            path_to_dir = os.path.join(dst_dir_path, content)
+            path_to_file = os.path.join(dir_path_content, content)
+            create_directory(path_to_dir)
+            generate_pages_recursive(path_to_file, template_path, path_to_dir)
 
